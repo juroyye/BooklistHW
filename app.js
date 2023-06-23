@@ -73,6 +73,37 @@ static showAlert(message, className){
 
 // Store Class: Handles Storage
 
+class Store{
+  
+  static getBooks(){
+  let books;
+  if(localStorage.getItem('books') === null) {
+      books = JSON.parse(localStorage.getItem('books'));
+   }
+
+   return books;
+}
+
+static addBook(book) {
+ const books = Store.getBooks();
+ books.push(book);
+ localStorage.setItem('books', JSON.stringify(books));
+}
+
+static removeBook(isbn) {
+  const books = Store.getBooks();
+
+//   books.forEach(book, index) => {
+//     if(book.isbn === isbn) {
+//       books.splice(index, 1);
+//     }
+// };
+
+    localStorage.setItem('books', JSON.stringify(books));
+ }
+}
+
+
 // Event: Display Books
 
 document.addEventListener('DOMContentLoaded', UI.displayBooks);
@@ -91,7 +122,7 @@ document.querySelector('#book-form').addEventListener('submit',
     const isbn = document.querySelector('#isbn').value;
 
     // Validate 
-    if(title === ' ' || author === ' ' || isbn === ' ') {
+    if(title === '' || author === '' || isbn === '') {
      UI.showAlert('Please fill in all fields', 'danger');
     } else {
           // Instantiate Book
@@ -112,7 +143,12 @@ document.querySelector('#book-form').addEventListener('submit',
 // Event: Remove A Book
 
 document.querySelector('#book-list').addEventListener('click', (e)=> {
+
+  // Remove Book from UI
   UI.deleteBook(e.target)
+
+  // Remove Book from Store
+  Store.removeBook(e.target.parentElement.previousElementSibling.textContent);
 
    //Show delete message
 
